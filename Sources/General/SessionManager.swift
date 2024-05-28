@@ -149,7 +149,7 @@ public class SessionManager {
         set { protectedState.write { $0.tasks = newValue } }
     }
     
-    private var runningTasks: [DownloadTask] {
+	public private(set) var runningTasks: [DownloadTask] {
         get { protectedState.wrappedValue.runningTasks }
         set { protectedState.write { $0.runningTasks = newValue } }
     }
@@ -164,10 +164,18 @@ public class SessionManager {
         set { protectedState.write { $0.succeededTasks = newValue } }
     }
 
-    private let _progress = Progress()
     public var progress: Progress {
+		let _progress = Progress()
         _progress.completedUnitCount = tasks.reduce(0, { $0 + $1.progress.completedUnitCount })
         _progress.totalUnitCount = tasks.reduce(0, { $0 + $1.progress.totalUnitCount })
+        return _progress
+    }
+    
+    public var runningProgress: Progress {
+        let _progress = Progress()
+        let runningTasks = runningTasks
+        _progress.completedUnitCount = runningTasks.reduce(0, { $0 + $1.progress.completedUnitCount })
+        _progress.totalUnitCount = runningTasks.reduce(0, { $0 + $1.progress.totalUnitCount })
         return _progress
     }
 
@@ -417,6 +425,11 @@ extension SessionManager {
         } catch {
             log(.error("fetch task failed", error: TiercelError.invalidURL(url: url)))
             return nil
+        }
+    }
+    public func fetchTask(fileName: String) -> [DownloadTask] {
+        protectedState.read {
+            $0.tasks.filter { $0.fileName == fileName }
         }
     }
     
