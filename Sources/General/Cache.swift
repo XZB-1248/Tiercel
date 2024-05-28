@@ -191,7 +191,7 @@ extension Cache {
 extension Cache {
     internal func retrieveAllTasks() -> [DownloadTask] {
         return ioQueue.sync {
-            let path = (downloadPath as NSString).appendingPathComponent("\(identifier)_Tasks.plist")
+            let path = (downloadPath as NSString).appendingPathComponent("\(identifier)Tasks.plist")
             if fileManager.fileExists(atPath: path) {
                 do {
                     let url = URL(fileURLWithPath: path)
@@ -254,7 +254,7 @@ extension Cache {
 extension Cache {
     internal func storeTasks(_ tasks: [DownloadTask]) {
         debouncer.execute(label: "storeTasks", wallDeadline: .now() + 0.2) {
-            var path = (self.downloadPath as NSString).appendingPathComponent("\(self.identifier)_Tasks.plist")
+            var path = (self.downloadPath as NSString).appendingPathComponent("\(self.identifier)Tasks.plist")
             do {
                 let data = try self.encoder.encode(tasks)
                 let url = URL(fileURLWithPath: path)
