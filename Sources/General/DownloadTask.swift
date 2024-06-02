@@ -55,6 +55,7 @@ public class DownloadTask: TiercelTask<DownloadTask> {
         set { protectedDownloadState.write { $0.response = newValue } }
     }
     
+    public var taskInfo: [String: Any] = [:]
 
     public var filePath: String {
         return cache.filePath(fileName: fileName)!
@@ -100,11 +101,13 @@ public class DownloadTask: TiercelTask<DownloadTask> {
                   headers: [String: String]? = nil,
                   fileName: String? = nil,
                   cache: Cache,
-                  operationQueue: DispatchQueue) {
+                  operationQueue: DispatchQueue,
+                  userInfo: [String: Any]? = nil) {
         super.init(url,
                    headers: headers,
                    cache: cache,
-                   operationQueue: operationQueue)
+                   operationQueue: operationQueue,
+                   userInfo: userInfo)
         if let fileName = fileName, !fileName.isEmpty {
             self.fileName = fileName
         }
